@@ -1,0 +1,61 @@
+[
+    {
+        '$project': {
+            '_id': 0, 
+            'gender': 1, 
+            'raceEthnicity': 1, 
+            'parentalLevelOfEducation': 1, 
+            'lunch': 1, 
+            'testPreparationCourse': 1, 
+            'mathScore': 1, 
+            'readingScore': 1, 
+            'writingScore': 1
+        }
+    }, {
+        '$match': {
+            'mathScore': {
+                '$gt': 60
+            }, 
+            'readingScore': {
+                '$gt': 60
+            }, 
+            'writingScore': {
+                '$gt': 60
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$raceEthnicity', 
+            'avg_math_S': {
+                '$avg': '$mathScore'
+            }, 
+            'max_math': {
+                '$max': '$mathScore'
+            }, 
+            'min_math': {
+                '$min': '$mathScore'
+            }, 
+            'no_rec': {
+                '$sum': 1
+            }
+        }
+    }, {
+        '$sort': {
+            'max_math': 1
+        }
+    }, {
+        '$project': {
+            'avg_math_S': {
+                '$trunc': [
+                    '$avg_math_S'
+                ]
+            }, 
+            'no_rec': 1, 
+            'math_score_range': {
+                '$subtract': [
+                    '$max_math', '$min_math'
+                ]
+            }
+        }
+    }
+]
